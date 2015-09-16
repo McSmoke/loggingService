@@ -1,4 +1,4 @@
-package com.googlelogger;
+package com.googlelogger.service;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
@@ -19,7 +20,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,10 +38,27 @@ public class LoggingService extends Service
     private ArrayList<LogProvider> mProviders = new ArrayList<LogProvider>();
     private AlarmManager mServiceStarterAlarmManager;
 
+    private final ILoggingServiceAPI.Stub mBinder = new ILoggingServiceAPI.Stub() {
+        @Override
+        public IBinder asBinder() {
+            return null;
+        }
+
+        @Override
+        public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
+
+        }
+
+        @Override
+        public void logToFile(String _path) throws RemoteException {
+            Log.e(TAG, "LOGGING TO FILE:"+_path);
+        }
+    };
+
     @Override
     public IBinder onBind(Intent intent)
     {
-        return null;
+        return mBinder;
     }
 
     @Override
